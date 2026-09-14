@@ -1,0 +1,394 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-800 antialiased selection:bg-brand-500 selection:text-white transition-colors duration-200;
+  }
+}
+
+/* Dark Mode Global Overrides & Enhancements */
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark body {
+  background-color: #0b1120;
+  color: #e2e8f0;
+}
+
+/* Dark mode surfaces & cards */
+.dark .bg-white {
+  background-color: #131c31 !important;
+}
+
+.dark .bg-slate-50 {
+  background-color: #0b1120 !important;
+}
+
+.dark .bg-slate-100 {
+  background-color: #1a243a !important;
+}
+
+.dark .hover\:bg-slate-50:hover {
+  background-color: #172238 !important;
+}
+
+.dark .hover\:bg-slate-100:hover {
+  background-color: #1f2c47 !important;
+}
+
+/* Dark mode text colors */
+.dark .text-slate-900 {
+  color: #f8fafc !important;
+}
+
+.dark .text-slate-800 {
+  color: #f1f5f9 !important;
+}
+
+.dark .text-slate-700 {
+  color: #e2e8f0 !important;
+}
+
+.dark .text-slate-600 {
+  color: #cbd5e1 !important;
+}
+
+.dark .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+/* Dark mode borders */
+.dark .border-slate-100,
+.dark .border-slate-200,
+.dark .border-slate-300 {
+  border-color: #22314e !important;
+}
+
+.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+.dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #22314e !important;
+}
+
+/* Dark mode form controls */
+.dark input:not([type="checkbox"]):not([type="radio"]),
+.dark select,
+.dark textarea {
+  background-color: #0c1427 !important;
+  border-color: #263859 !important;
+  color: #f8fafc !important;
+}
+
+/* ==================================================
+   ROLE-BASED COLOR THEME TOKENS
+   ================================================== */
+:root,
+:root[data-role="STUDENT"],
+[data-role="STUDENT"] {
+  /* STUDENT: Violet */
+  --role-primary: #8B5CF6;
+  --role-secondary: #A78BFA;
+  --role-accent: #C4B5FD;
+  --role-light: #F5F3FF;
+  --role-dark: #7C3AED;
+  --role-darker: #6D28D9;
+  --role-darkest: #2E1065;
+
+  --role-primary-rgb: 139 92 246;
+  --role-secondary-rgb: 167 139 250;
+  --role-accent-rgb: 196 181 253;
+  --role-light-rgb: 245 243 255;
+  --role-dark-rgb: 124 58 237;
+  --role-darker-rgb: 109 40 217;
+  --role-darkest-rgb: 46 16 101;
+
+  --role-50-rgb: 245 243 255;
+  --role-100-rgb: 237 233 254;
+  --role-200-rgb: 221 214 254;
+  --role-800-rgb: 109 40 217;
+  --role-900-rgb: 76 29 149;
+  --role-950-rgb: 46 16 101;
+}
+
+:root[data-role="ADMIN"],
+[data-role="ADMIN"] {
+  /* ADMIN: Deep Purple */
+  --role-primary: #7C3AED;
+  --role-secondary: #A78BFA;
+  --role-accent: #C4B5FD;
+  --role-light: #F5F3FF;
+  --role-dark: #6D28D9;
+  --role-darker: #5B21B6;
+  --role-darkest: #2E1065;
+
+  --role-primary-rgb: 124 58 237;
+  --role-secondary-rgb: 167 139 250;
+  --role-accent-rgb: 196 181 253;
+  --role-light-rgb: 245 243 255;
+  --role-dark-rgb: 109 40 217;
+  --role-darker-rgb: 91 33 182;
+  --role-darkest-rgb: 46 16 101;
+
+  --role-50-rgb: 245 243 255;
+  --role-100-rgb: 237 233 254;
+  --role-200-rgb: 221 214 254;
+  --role-800-rgb: 91 33 182;
+  --role-900-rgb: 76 29 149;
+  --role-950-rgb: 46 16 101;
+}
+
+:root[data-role="DEAN"],
+[data-role="DEAN"] {
+  /* DEAN: Indigo */
+  --role-primary: #4F46E5;
+  --role-secondary: #818CF8;
+  --role-accent: #A5B4FC;
+  --role-light: #EEF2FF;
+  --role-dark: #4338CA;
+  --role-darker: #3730A3;
+  --role-darkest: #1E1B4B;
+
+  --role-primary-rgb: 79 70 229;
+  --role-secondary-rgb: 129 140 248;
+  --role-accent-rgb: 165 180 252;
+  --role-light-rgb: 238 242 255;
+  --role-dark-rgb: 67 56 202;
+  --role-darker-rgb: 55 48 163;
+  --role-darkest-rgb: 30 27 75;
+
+  --role-50-rgb: 238 242 255;
+  --role-100-rgb: 224 231 255;
+  --role-200-rgb: 199 210 254;
+  --role-800-rgb: 55 48 163;
+  --role-900-rgb: 49 46 129;
+  --role-950-rgb: 30 27 75;
+}
+
+:root[data-role="HOD"],
+[data-role="HOD"] {
+  /* HOD: Blue */
+  --role-primary: #2563EB;
+  --role-secondary: #60A5FA;
+  --role-accent: #93C5FD;
+  --role-light: #EFF6FF;
+  --role-dark: #1D4ED8;
+  --role-darker: #1E40AF;
+  --role-darkest: #172554;
+
+  --role-primary-rgb: 37 99 235;
+  --role-secondary-rgb: 96 165 250;
+  --role-accent-rgb: 147 197 253;
+  --role-light-rgb: 239 246 255;
+  --role-dark-rgb: 29 78 216;
+  --role-darker-rgb: 30 64 175;
+  --role-darkest-rgb: 23 37 84;
+
+  --role-50-rgb: 239 246 255;
+  --role-100-rgb: 219 234 254;
+  --role-200-rgb: 191 219 254;
+  --role-800-rgb: 30 64 175;
+  --role-900-rgb: 30 58 138;
+  --role-950-rgb: 23 37 84;
+}
+
+:root[data-role="FACULTY"],
+:root[data-role="STAFF"],
+[data-role="FACULTY"],
+[data-role="STAFF"] {
+  /* FACULTY: Cyan / Teal */
+  --role-primary: #0891B2;
+  --role-secondary: #22D3EE;
+  --role-accent: #67E8F9;
+  --role-light: #ECFEFF;
+  --role-dark: #0E7490;
+  --role-darker: #155E75;
+  --role-darkest: #083344;
+
+  --role-primary-rgb: 8 145 178;
+  --role-secondary-rgb: 34 211 238;
+  --role-accent-rgb: 103 232 249;
+  --role-light-rgb: 236 254 255;
+  --role-dark-rgb: 14 116 144;
+  --role-darker-rgb: 21 94 117;
+  --role-darkest-rgb: 8 51 68;
+
+  --role-50-rgb: 236 254 255;
+  --role-100-rgb: 207 250 254;
+  --role-200-rgb: 165 243 252;
+  --role-800-rgb: 21 94 117;
+  --role-900-rgb: 22 78 99;
+  --role-950-rgb: 8 51 68;
+}
+
+:root[data-role="MENTOR"],
+[data-role="MENTOR"] {
+  /* MENTOR: Green */
+  --role-primary: #059669;
+  --role-secondary: #34D399;
+  --role-accent: #6EE7B7;
+  --role-light: #ECFDF5;
+  --role-dark: #047857;
+  --role-darker: #065F46;
+  --role-darkest: #022C22;
+
+  --role-primary-rgb: 5 150 105;
+  --role-secondary-rgb: 52 211 153;
+  --role-accent-rgb: 110 231 183;
+  --role-light-rgb: 236 253 245;
+  --role-dark-rgb: 4 120 87;
+  --role-darker-rgb: 6 95 70;
+  --role-darkest-rgb: 2 44 34;
+
+  --role-50-rgb: 236 253 245;
+  --role-100-rgb: 209 250 229;
+  --role-200-rgb: 167 243 208;
+  --role-800-rgb: 6 95 70;
+  --role-900-rgb: 6 78 59;
+  --role-950-rgb: 2 44 34;
+}
+
+:root[data-role="PARENT"],
+[data-role="PARENT"] {
+  /* PARENT: Amber / Gold */
+  --role-primary: #D97706;
+  --role-secondary: #F59E0B;
+  --role-accent: #FCD34D;
+  --role-light: #FFFBEB;
+  --role-dark: #B45309;
+  --role-darker: #92400E;
+  --role-darkest: #451A03;
+
+  --role-primary-rgb: 217 119 6;
+  --role-secondary-rgb: 245 158 11;
+  --role-accent-rgb: 252 211 77;
+  --role-light-rgb: 255 251 235;
+  --role-dark-rgb: 180 83 9;
+  --role-darker-rgb: 146 64 14;
+  --role-darkest-rgb: 69 26 3;
+
+  --role-50-rgb: 255 251 235;
+  --role-100-rgb: 254 243 199;
+  --role-200-rgb: 253 230 138;
+  --role-800-rgb: 146 64 14;
+  --role-900-rgb: 120 53 15;
+  --role-950-rgb: 69 26 3;
+}
+
+:root[data-role="EXAM_SECTION"],
+[data-role="EXAM_SECTION"] {
+  /* EXAMINATION SECTION: Orange */
+  --role-primary: #EA580C;
+  --role-secondary: #FB923C;
+  --role-accent: #FDBA74;
+  --role-light: #FFF7ED;
+  --role-dark: #C2410C;
+  --role-darker: #9A3412;
+  --role-darkest: #431407;
+
+  --role-primary-rgb: 234 88 12;
+  --role-secondary-rgb: 251 146 60;
+  --role-accent-rgb: 253 186 116;
+  --role-light-rgb: 255 247 237;
+  --role-dark-rgb: 194 65 12;
+  --role-darker-rgb: 154 52 18;
+  --role-darkest-rgb: 67 20 7;
+
+  --role-50-rgb: 255 247 237;
+  --role-100-rgb: 255 237 213;
+  --role-200-rgb: 254 215 170;
+  --role-800-rgb: 154 52 18;
+  --role-900-rgb: 124 45 18;
+  --role-950-rgb: 67 20 7;
+}
+
+.dark input:not([type="checkbox"]):not([type="radio"]):focus,
+.dark select:focus,
+.dark textarea:focus {
+  border-color: var(--role-primary) !important;
+  outline: none;
+}
+
+/* Dark mode tables */
+.dark table thead th {
+  background-color: #111a2e !important;
+  color: #cbd5e1 !important;
+  border-color: #22314e !important;
+}
+
+.dark table tbody td {
+  border-color: #22314e !important;
+}
+
+.dark table tbody tr:hover {
+  background-color: #172238 !important;
+}
+
+/* Dark mode modals & popups */
+.dark .shadow-xs,
+.dark .shadow-sm,
+.dark .shadow-md,
+.dark .shadow-lg,
+.dark .shadow-xl {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-track {
+  background: #0b1120;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #263859;
+  border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #3b5078;
+}
+
+/* ==================================================
+   ROLE THEME DYNAMIC HELPERS & ACTIVE STYLING
+   ================================================== */
+.bg-role-primary {
+  background-color: var(--role-primary) !important;
+}
+.hover\:bg-role-dark:hover {
+  background-color: var(--role-dark) !important;
+}
+.text-role-primary {
+  color: var(--role-primary) !important;
+}
+.text-role-secondary {
+  color: var(--role-secondary) !important;
+}
+.text-role-accent {
+  color: var(--role-accent) !important;
+}
+.border-role-primary {
+  border-color: var(--role-primary) !important;
+}
+.ring-role-primary {
+  --tw-ring-color: var(--role-primary) !important;
+}
+

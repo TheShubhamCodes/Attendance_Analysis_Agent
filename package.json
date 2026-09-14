@@ -1,0 +1,16 @@
+{
+  "name": "attendance-analysis-agent",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI-Powered Attendance & Student Performance Agent",
+  "scripts": {
+    "server": "npm --prefix server run dev",
+    "client": "npm --prefix client run dev",
+    "db:start": "npm --prefix server run db:start",
+    "db:seed": "npm --prefix server run db:seed",
+    "start": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

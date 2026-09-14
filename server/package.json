@@ -1,0 +1,32 @@
+{
+  "name": "attendance-analysis-server",
+  "version": "1.0.0",
+  "description": "Backend API for Attendance & Student Performance Agent",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "db:start": "node src/utils/dbRunner.js",
+    "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push",
+    "prisma:migrate": "prisma migrate dev",
+    "db:seed": "node prisma/seed.js",
+    "db:setup": "node src/utils/dbRunner.js --init-and-exit && prisma db push && node prisma/seed.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "embedded-postgres": "^18.4.0-beta.17",
+    "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.13.1",
+    "twilio": "^6.1.1",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7",
+    "prisma": "^5.22.0"
+  }
+}
