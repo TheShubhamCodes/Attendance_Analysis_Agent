@@ -11,7 +11,7 @@
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:deploy": "prisma migrate deploy",
+    "prisma:deploy": "prisma db push --accept-data-loss",
     "db:seed": "node prisma/seed.js",
     "db:setup": "node src/utils/dbRunner.js --init-and-exit && prisma db push && node prisma/seed.js"
   },
