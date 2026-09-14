@@ -118,10 +118,9 @@ This guide provides step-by-step instructions to deploy the **Attendance Analysi
 | Setting | Value |
 | :--- | :--- |
 | **Framework Preset** | `Vite` (automatically detected) |
-| **Root Directory** | `client` *(Click "Edit" and select `client`)* |
-| **Build Command** | `npm run build` |
-| **Output Directory** | `dist` |
-| **Install Command** | `npm install` |
+| **Root Directory** | `.` (Root) or `client` *(Both work out-of-the-box thanks to root `vercel.json`)* |
+| **Build Command** | Leave default (auto-detected via `vercel.json`) |
+| **Output Directory** | Leave default (auto-detected via `vercel.json`) |
 
 5. Configure **Environment Variables**:
 
