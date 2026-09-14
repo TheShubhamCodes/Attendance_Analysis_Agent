@@ -134,11 +134,32 @@ async function ensureAdminAccount() {
   }
 }
 
+// Ensure Default Departments Exist
+async function ensureDefaultDepartments() {
+  try {
+    const count = await prisma.department.count();
+    if (count === 0) {
+      await prisma.department.createMany({
+        data: [
+          { name: 'Computer Science & Engineering', code: 'CSE' },
+          { name: 'Information Technology', code: 'IT' },
+          { name: 'Electronics & Communication Engineering', code: 'ECE' },
+        ],
+        skipDuplicates: true,
+      });
+      console.log('[Department Boot] Initialized default academic departments (CSE, IT, ECE).');
+    }
+  } catch (err) {
+    console.error('[Department Boot] Error verifying departments:', err.message);
+  }
+}
+
 // Server initialization
 async function startServer() {
   try {
     // Ensure DB is running
     await startDatabase();
+    await ensureDefaultDepartments();
     await ensureAdminAccount();
 
     app.listen(PORT, () => {
