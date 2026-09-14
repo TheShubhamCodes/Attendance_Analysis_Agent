@@ -9,6 +9,7 @@
     "db:start": "npm --prefix server run db:start",
     "db:seed": "npm --prefix server run db:seed",
     "start": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "npm --prefix client install && npm --prefix client run build",
     "render:build": "npm --prefix server install && npm --prefix server run build && npm --prefix server run prisma:deploy",
     "render:start": "npm --prefix server start"
   },
