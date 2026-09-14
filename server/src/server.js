@@ -248,6 +248,173 @@ async function ensureDefaultStaffAccounts() {
   }
 }
 
+// Ensure Default Academic Curriculum (Sections, Courses/Subjects, Faculty Assignments, Timetable)
+async function ensureDefaultAcademicCurriculum() {
+  try {
+    const cseDept = await prisma.department.findFirst({ where: { code: 'CSE' } });
+    const itDept = await prisma.department.findFirst({ where: { code: 'IT' } });
+    const eceDept = await prisma.department.findFirst({ where: { code: 'ECE' } });
+    if (!cseDept) return;
+
+    // 1. Ensure Sections exist
+    const sectionCount = await prisma.section.count();
+    if (sectionCount === 0) {
+      const defaultSections = [
+        { name: 'A', departmentId: cseDept.id, year: 3, semester: 5, capacity: 60, academicYear: '2026-2027' },
+        { name: 'B', departmentId: cseDept.id, year: 3, semester: 5, capacity: 60, academicYear: '2026-2027' },
+        { name: 'C', departmentId: cseDept.id, year: 3, semester: 5, capacity: 60, academicYear: '2026-2027' },
+      ];
+      if (itDept) {
+        defaultSections.push(
+          { name: 'A', departmentId: itDept.id, year: 3, semester: 5, capacity: 60, academicYear: '2026-2027' },
+          { name: 'B', departmentId: itDept.id, year: 3, semester: 5, capacity: 60, academicYear: '2026-2027' }
+        );
+      }
+      if (eceDept) {
+        defaultSections.push(
+          { name: 'A', departmentId: eceDept.id, year: 3, semester: 5, capacity: 60, academicYear: '2026-2027' },
+          { name: 'B', departmentId: eceDept.id, year: 3, semester: 5, capacity: 60, academicYear: '2026-2027' }
+        );
+      }
+      for (const s of defaultSections) {
+        await prisma.section.create({ data: s });
+      }
+      console.log('[Curriculum Boot] Initialized default academic sections.');
+    }
+
+    // 2. Ensure Courses / Subjects exist
+    const courseCount = await prisma.course.count();
+    let courses = [];
+    if (courseCount === 0) {
+      const demoFaculty = await prisma.staff.findFirst({ where: { employeeId: 'FAC001' } });
+      const demoHod = await prisma.staff.findFirst({ where: { employeeId: 'HOD001' } });
+      const demoMentor = await prisma.staff.findFirst({ where: { employeeId: 'STAFF001' } });
+
+      const courseDefs = [
+        // CSE Semester 5
+        { courseCode: 'CS301', courseName: 'Computer Networks', departmentId: cseDept.id, year: 3, semester: 5, credits: 4, facultyId: demoFaculty ? demoFaculty.id : null },
+        { courseCode: 'CS302', courseName: 'Operating Systems', departmentId: cseDept.id, year: 3, semester: 5, credits: 4, facultyId: demoFaculty ? demoFaculty.id : null },
+        { courseCode: 'CS303', courseName: 'Database Management Systems', departmentId: cseDept.id, year: 3, semester: 5, credits: 4, facultyId: demoFaculty ? demoFaculty.id : null },
+        { courseCode: 'CS304', courseName: 'Software Engineering', departmentId: cseDept.id, year: 3, semester: 5, credits: 3, facultyId: demoFaculty ? demoFaculty.id : null },
+        { courseCode: 'CS305', courseName: 'Cloud Computing Architecture', departmentId: cseDept.id, year: 3, semester: 5, credits: 3, facultyId: demoHod ? demoHod.id : null },
+        { courseCode: 'MA301', courseName: 'Discrete Mathematics', departmentId: cseDept.id, year: 3, semester: 5, credits: 3, facultyId: demoMentor ? demoMentor.id : null },
+      ];
+
+      if (itDept) {
+        courseDefs.push(
+          { courseCode: 'IT301', courseName: 'Web Technologies', departmentId: itDept.id, year: 3, semester: 5, credits: 4 },
+          { courseCode: 'IT302', courseName: 'Information Security', departmentId: itDept.id, year: 3, semester: 5, credits: 4 },
+          { courseCode: 'IT303', courseName: 'Data Mining & Warehousing', departmentId: itDept.id, year: 3, semester: 5, credits: 3 }
+        );
+      }
+
+      if (eceDept) {
+        courseDefs.push(
+          { courseCode: 'EC301', courseName: 'Digital Signal Processing', departmentId: eceDept.id, year: 3, semester: 5, credits: 4 },
+          { courseCode: 'EC302', courseName: 'Microprocessors & Microcontrollers', departmentId: eceDept.id, year: 3, semester: 5, credits: 4 },
+          { courseCode: 'EC303', courseName: 'Communication Systems', departmentId: eceDept.id, year: 3, semester: 5, credits: 3 }
+        );
+      }
+
+      for (const cd of courseDefs) {
+        const createdCourse = await prisma.course.create({ data: cd });
+        courses.push(createdCourse);
+      }
+      console.log(`[Curriculum Boot] Initialized ${courses.length} default academic courses.`);
+
+      // 3. Ensure Faculty Subject Assignments
+      if (demoFaculty) {
+        const cnCourse = courses.find(c => c.courseCode === 'CS301');
+        const dbmsCourse = courses.find(c => c.courseCode === 'CS303');
+        const cloudCourse = courses.find(c => c.courseCode === 'CS305');
+        const mathCourse = courses.find(c => c.courseCode === 'MA301');
+
+        if (cnCourse) {
+          await prisma.facultySubjectAssignment.create({
+            data: { facultyId: demoFaculty.id, courseId: cnCourse.id, section: 'A', semester: 5, academicYear: '2026-2027' }
+          });
+          await prisma.facultySubjectAssignment.create({
+            data: { facultyId: demoFaculty.id, courseId: cnCourse.id, section: 'B', semester: 5, academicYear: '2026-2027' }
+          });
+        }
+        if (dbmsCourse) {
+          await prisma.facultySubjectAssignment.create({
+            data: { facultyId: demoFaculty.id, courseId: dbmsCourse.id, section: 'A', semester: 5, academicYear: '2026-2027' }
+          });
+        }
+        if (cloudCourse && demoHod) {
+          await prisma.facultySubjectAssignment.create({
+            data: { facultyId: demoHod.id, courseId: cloudCourse.id, section: 'A', semester: 5, academicYear: '2026-2027' }
+          });
+        }
+        if (mathCourse && demoMentor) {
+          await prisma.facultySubjectAssignment.create({
+            data: { facultyId: demoMentor.id, courseId: mathCourse.id, section: 'A', semester: 5, academicYear: '2026-2027' }
+          });
+        }
+        console.log('[Curriculum Boot] Initialized faculty subject assignments.');
+
+        // 4. Ensure Timetable Slots for Section A, Semester 5
+        const timetableCount = await prisma.timetable.count();
+        if (timetableCount === 0 && cnCourse && dbmsCourse) {
+          const days = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'];
+          const scheduleSlots = [
+            { periodNumber: 1, periodId: 'P1', startTime: '08:15', endTime: '09:05', courseId: cnCourse.id, subjectCode: 'CS301', subjectName: 'Computer Networks', facultyId: demoFaculty.id, room: 'N301' },
+            { periodNumber: 2, periodId: 'P2', startTime: '09:05', endTime: '09:55', courseId: dbmsCourse.id, subjectCode: 'CS303', subjectName: 'Database Management Systems', facultyId: demoFaculty.id, room: 'N301' },
+            { periodNumber: 3, periodId: 'P3', startTime: '10:15', endTime: '11:05', courseId: cloudCourse ? cloudCourse.id : null, subjectCode: 'CS305', subjectName: 'Cloud Computing Architecture', facultyId: demoHod ? demoHod.id : null, room: 'N301' },
+            { periodNumber: 4, periodId: 'P4', startTime: '11:05', endTime: '11:55', courseId: mathCourse ? mathCourse.id : null, subjectCode: 'MA301', subjectName: 'Discrete Mathematics', facultyId: demoMentor ? demoMentor.id : null, room: 'N301' },
+            { periodNumber: 5, periodId: 'P5', startTime: '12:45', endTime: '01:35', courseId: null, subjectCode: 'CS302', subjectName: 'Operating Systems', facultyId: demoFaculty.id, room: 'N301' },
+          ];
+
+          for (const day of days) {
+            for (const slot of scheduleSlots) {
+              await prisma.timetable.create({
+                data: {
+                  section: 'A',
+                  semester: 5,
+                  academicYear: '2026-2027',
+                  dayOfWeek: day,
+                  periodNumber: slot.periodNumber,
+                  periodId: slot.periodId,
+                  startTime: slot.startTime,
+                  endTime: slot.endTime,
+                  courseId: slot.courseId,
+                  subjectCode: slot.subjectCode,
+                  subjectName: slot.subjectName,
+                  facultyId: slot.facultyId,
+                  room: slot.room,
+                }
+              });
+            }
+          }
+          console.log('[Curriculum Boot] Initialized default weekly timetable slots.');
+        }
+
+        // 5. Ensure Counselor Assignment for existing students (e.g. 241FA04D34)
+        const student = await prisma.student.findFirst({ where: { section: 'A' } });
+        if (student) {
+          const existingCounselor = await prisma.counselorAssignment.findFirst({
+            where: { studentId: student.id }
+          });
+          if (!existingCounselor) {
+            await prisma.counselorAssignment.create({
+              data: {
+                facultyId: demoFaculty.id,
+                studentId: student.id,
+                academicYear: '2026-2027',
+                semester: 5,
+              }
+            });
+            console.log('[Curriculum Boot] Linked student to counselor faculty.');
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.error('[Curriculum Boot] Error initializing academic curriculum:', err.message);
+  }
+}
+
 // Server initialization
 async function startServer() {
   try {
@@ -256,6 +423,7 @@ async function startServer() {
     await ensureDefaultDepartments();
     await ensureAdminAccount();
     await ensureDefaultStaffAccounts();
+    await ensureDefaultAcademicCurriculum();
 
     app.listen(PORT, () => {
       console.log(`=======================================================`);

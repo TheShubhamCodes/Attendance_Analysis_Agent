@@ -31,6 +31,19 @@ export const AdminFacultyPage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState({ text: '', isError: false });
 
+  // Add Faculty Modal
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [addForm, setAddForm] = useState({
+    identifier: '',
+    name: '',
+    email: '',
+    departmentId: '',
+    designation: 'Assistant Professor',
+    mobileNumber: '',
+    password: 'Faculty@123',
+  });
+  const [addingFaculty, setAddingFaculty] = useState(false);
+
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -117,6 +130,43 @@ export const AdminFacultyPage = () => {
     }
   };
 
+  const handleAddFaculty = async (e) => {
+    e.preventDefault();
+    if (!addForm.identifier || !addForm.name || !addForm.email || !addForm.departmentId) {
+      setMessage({ text: 'Please fill in all required fields.', isError: true });
+      return;
+    }
+    setAddingFaculty(true);
+    setMessage({ text: '', isError: false });
+    try {
+      const res = await api.post('/admin/users', {
+        ...addForm,
+        role: 'FACULTY',
+      });
+      if (res.data?.success) {
+        setMessage({ text: res.data.message || 'Faculty member registered successfully.', isError: false });
+        setShowAddModal(false);
+        setAddForm({
+          identifier: '',
+          name: '',
+          email: '',
+          departmentId: departments[0]?.id || '',
+          designation: 'Assistant Professor',
+          mobileNumber: '',
+          password: 'Faculty@123',
+        });
+        fetchData();
+      }
+    } catch (err) {
+      setMessage({
+        text: err.response?.data?.message || 'Failed to add faculty member.',
+        isError: true,
+      });
+    } finally {
+      setAddingFaculty(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -130,6 +180,16 @@ export const AdminFacultyPage = () => {
             View teaching faculty, assign courses and class sections, and manage departmental responsibilities.
           </p>
         </div>
+        <button
+          onClick={() => {
+            setAddForm((prev) => ({ ...prev, departmentId: prev.departmentId || departments[0]?.id || '' }));
+            setShowAddModal(true);
+          }}
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-purple-900/30 transition-all cursor-pointer w-fit"
+        >
+          <Plus className="w-4 h-4" />
+          <span>+ Add New Faculty</span>
+        </button>
       </div>
 
       {/* Global Alert Notification */}
@@ -356,6 +416,142 @@ export const AdminFacultyPage = () => {
                   className="px-5 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-bold disabled:opacity-50"
                 >
                   {submitting ? 'Assigning...' : 'Confirm Assignment'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add Faculty Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <h2 className="text-base font-bold text-white flex items-center gap-2">
+                <Plus className="w-4 h-4 text-purple-400" />
+                Register New Faculty Member
+              </h2>
+              <button onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-white cursor-pointer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddFaculty} className="space-y-3.5 text-xs">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-400 font-semibold mb-1">
+                    Employee ID <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. FAC002"
+                    value={addForm.identifier}
+                    onChange={(e) => setAddForm({ ...addForm, identifier: e.target.value.toUpperCase() })}
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono font-bold uppercase"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-400 font-semibold mb-1">
+                    Full Name <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Dr. Priya Sharma"
+                    value={addForm.name}
+                    onChange={(e) => setAddForm({ ...addForm, name: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-400 font-semibold mb-1">
+                  Email Address <span className="text-rose-500">*</span>
+                </label>
+                <input
+                  type="email"
+                  required
+                  placeholder="e.g. priya.sharma@university.edu"
+                  value={addForm.email}
+                  onChange={(e) => setAddForm({ ...addForm, email: e.target.value })}
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-400 font-semibold mb-1">
+                    Department <span className="text-rose-500">*</span>
+                  </label>
+                  <select
+                    required
+                    value={addForm.departmentId}
+                    onChange={(e) => setAddForm({ ...addForm, departmentId: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white"
+                  >
+                    <option value="">-- Select Dept --</option>
+                    {departments.map((d) => (
+                      <option key={d.id} value={d.id}>
+                        {d.name} ({d.code})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-slate-400 font-semibold mb-1">Designation</label>
+                  <select
+                    value={addForm.designation}
+                    onChange={(e) => setAddForm({ ...addForm, designation: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white"
+                  >
+                    <option value="Assistant Professor">Assistant Professor</option>
+                    <option value="Associate Professor">Associate Professor</option>
+                    <option value="Professor">Professor</option>
+                    <option value="Senior Lecturer">Senior Lecturer</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-400 font-semibold mb-1">Mobile Number</label>
+                  <input
+                    type="tel"
+                    placeholder="10-digit mobile"
+                    value={addForm.mobileNumber}
+                    onChange={(e) => setAddForm({ ...addForm, mobileNumber: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-400 font-semibold mb-1">Initial Password</label>
+                  <input
+                    type="text"
+                    required
+                    value={addForm.password}
+                    onChange={(e) => setAddForm({ ...addForm, password: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-3 flex justify-end space-x-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-semibold cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={addingFaculty}
+                  className="px-5 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-bold disabled:opacity-50 cursor-pointer"
+                >
+                  {addingFaculty ? 'Adding...' : 'Create Faculty Member'}
                 </button>
               </div>
             </form>
