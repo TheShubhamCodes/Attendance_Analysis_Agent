@@ -57,6 +57,11 @@ export const StudentSignupPage = () => {
       return;
     }
 
+    if (!formData.departmentId) {
+      setErrorMessage('Please select your department. If departments are loading, please wait a few seconds and try again.');
+      return;
+    }
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       setErrorMessage('Please enter a valid college email address.');
@@ -94,9 +99,12 @@ export const StudentSignupPage = () => {
         }, 2000);
       }
     } catch (err) {
-      setErrorMessage(
-        err.response?.data?.message || 'An error occurred during registration. Please try again.'
-      );
+      const msg = err.response?.data?.message || 'An error occurred during registration. Please try again.';
+      if (msg.toLowerCase().includes('already exists')) {
+        setErrorMessage(`${msg} If this is your account, please click "Back to Login" to sign in.`);
+      } else {
+        setErrorMessage(msg);
+      }
     } finally {
       setLoading(false);
     }
@@ -221,6 +229,11 @@ export const StudentSignupPage = () => {
                     onChange={handleChange}
                     className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-brand-900"
                   >
+                    {departments.length === 0 ? (
+                      <option value="">Loading departments from server...</option>
+                    ) : (
+                      <option value="">-- Select Department --</option>
+                    )}
                     {departments.map((d) => (
                       <option key={d.id} value={d.id}>
                         {d.name} ({d.code})
