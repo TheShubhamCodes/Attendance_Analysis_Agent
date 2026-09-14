@@ -8,7 +8,9 @@
     "client": "npm --prefix client run dev",
     "db:start": "npm --prefix server run db:start",
     "db:seed": "npm --prefix server run db:seed",
-    "start": "concurrently \"npm run server\" \"npm run client\""
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "render:build": "npm --prefix server install && npm --prefix server run build && npm --prefix server run prisma:deploy",
+    "render:start": "npm --prefix server start"
   },
   "devDependencies": {
     "concurrently": "^9.1.0"

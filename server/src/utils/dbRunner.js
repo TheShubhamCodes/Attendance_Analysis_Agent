@@ -65,13 +65,29 @@ async function ensureDatabaseExists(databaseUrl) {
 }
 
 async function startDatabase() {
+  const dbUrl = process.env.DATABASE_URL || '';
+  const isProduction = process.env.NODE_ENV === 'production';
+  const isRemote = dbUrl && !dbUrl.includes('localhost') && !dbUrl.includes('127.0.0.1');
+
+  if (isProduction || isRemote) {
+    console.log('[DB Runner] Running in cloud/remote PostgreSQL mode. Skipping embedded-postgres.');
+    try {
+      const prisma = require('../config/db');
+      await prisma.$connect();
+      console.log('[DB Runner] Database connection successfully established via Prisma.');
+    } catch (err) {
+      console.warn(`[DB Runner] Note: Remote database connection test yielded: ${err.message}`);
+    }
+    return;
+  }
+
+  const localDbUrl = process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/attendance_agent_db?schema=public';
   const port = 5432;
   const isRunning = await checkPort(port);
 
   if (isRunning) {
     console.log(`[DB Runner] PostgreSQL is already running on port ${port}. Using active database.`);
-    const dbUrl = process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/attendance_agent_db?schema=public';
-    await ensureDatabaseExists(dbUrl);
+    await ensureDatabaseExists(localDbUrl);
     return;
   }
 
@@ -100,8 +116,7 @@ async function startDatabase() {
   await pgInstance.start();
   console.log(`[DB Runner] Embedded PostgreSQL started successfully on port ${port}.`);
 
-  const dbUrl = process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/attendance_agent_db?schema=public';
-  await ensureDatabaseExists(dbUrl);
+  await ensureDatabaseExists(localDbUrl);
 
   process.on('SIGINT', async () => {
     if (pgInstance) {

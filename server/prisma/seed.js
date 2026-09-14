@@ -16,6 +16,14 @@ const bcrypt = require('bcryptjs');
 const prisma = new PrismaClient();
 
 async function main() {
+  if (process.env.NODE_ENV === 'production' && !process.env.FORCE_SEED) {
+    console.error('================================================================');
+    console.error('[SEED BLOCKED] Seeding demo data is disabled in production.');
+    console.error('To override for a staging test database, set FORCE_SEED=true.');
+    console.error('================================================================');
+    process.exit(1);
+  }
+
   console.log('Seeding database with realistic university faculty, staff, and student data...');
 
   // Clean existing records in reverse dependency order
