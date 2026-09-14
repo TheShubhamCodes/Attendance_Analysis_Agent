@@ -154,6 +154,100 @@ async function ensureDefaultDepartments() {
   }
 }
 
+// Ensure Default Starter Staff Accounts (HOD, Faculty, Mentor)
+async function ensureDefaultStaffAccounts() {
+  try {
+    const cseDept = await prisma.department.findFirst({ where: { code: 'CSE' } });
+    if (!cseDept) return;
+
+    // 1. Ensure Default HOD (HOD001 / Hod@1234)
+    const existingHod = await prisma.user.findFirst({ where: { identifier: 'HOD001' } });
+    if (!existingHod) {
+      const hodPasswordHash = await bcrypt.hash('Hod@1234', 10);
+      const hodUser = await prisma.user.create({
+        data: {
+          identifier: 'HOD001',
+          passwordHash: hodPasswordHash,
+          role: 'HOD',
+          accountStatus: 'ACTIVE',
+        },
+      });
+      await prisma.staff.create({
+        data: {
+          userId: hodUser.id,
+          employeeId: 'HOD001',
+          name: 'Dr. Suresh Varma (HOD)',
+          email: 'hod.cse@university.edu',
+          mobileNumber: '9840556677',
+          departmentId: cseDept.id,
+          staffRole: 'HOD',
+          designation: 'Professor & Head of Department',
+          cabinLocation: 'Academic Block A, Room 101',
+        },
+      });
+      console.log('[Staff Boot] Default HOD account (HOD001) initialized.');
+    }
+
+    // 2. Ensure Default Faculty (FAC001 / Faculty@123)
+    const existingFaculty = await prisma.user.findFirst({ where: { identifier: 'FAC001' } });
+    if (!existingFaculty) {
+      const facultyPasswordHash = await bcrypt.hash('Faculty@123', 10);
+      const facultyUser = await prisma.user.create({
+        data: {
+          identifier: 'FAC001',
+          passwordHash: facultyPasswordHash,
+          role: 'STAFF',
+          accountStatus: 'ACTIVE',
+        },
+      });
+      await prisma.staff.create({
+        data: {
+          userId: facultyUser.id,
+          employeeId: 'FAC001',
+          name: 'Dr. Rajesh Kumar (Faculty)',
+          email: 'faculty.rajesh@university.edu',
+          mobileNumber: '9840112233',
+          departmentId: cseDept.id,
+          staffRole: 'FACULTY',
+          designation: 'Associate Professor',
+          cabinLocation: 'Academic Block B, Room 204',
+        },
+      });
+      console.log('[Staff Boot] Default Faculty account (FAC001) initialized.');
+    }
+
+    // 3. Ensure Default Mentor (STAFF001 / Staff@123)
+    const existingMentor = await prisma.user.findFirst({ where: { identifier: 'STAFF001' } });
+    if (!existingMentor) {
+      const mentorPasswordHash = await bcrypt.hash('Staff@123', 10);
+      const mentorUser = await prisma.user.create({
+        data: {
+          identifier: 'STAFF001',
+          passwordHash: mentorPasswordHash,
+          role: 'MENTOR',
+          accountStatus: 'ACTIVE',
+        },
+      });
+      await prisma.staff.create({
+        data: {
+          userId: mentorUser.id,
+          employeeId: 'STAFF001',
+          name: 'Dr. K. Ramanathan (Mentor)',
+          email: 'mentor.ramanathan@university.edu',
+          mobileNumber: '9840123456',
+          departmentId: cseDept.id,
+          staffRole: 'MENTOR',
+          designation: 'Senior Mentor & Professor',
+          cabinLocation: 'Academic Block C, Room 301',
+        },
+      });
+      console.log('[Staff Boot] Default Mentor account (STAFF001) initialized.');
+    }
+  } catch (err) {
+    console.error('[Staff Boot] Error initializing default staff accounts:', err.message);
+  }
+}
+
 // Server initialization
 async function startServer() {
   try {
@@ -161,6 +255,7 @@ async function startServer() {
     await startDatabase();
     await ensureDefaultDepartments();
     await ensureAdminAccount();
+    await ensureDefaultStaffAccounts();
 
     app.listen(PORT, () => {
       console.log(`=======================================================`);
